@@ -4,7 +4,7 @@ import re
 import os
 import yaml
 import validators
-
+import logging
 from consul import ConsulOperation
 
 if __name__ == "__main__":
@@ -16,27 +16,34 @@ if __name__ == "__main__":
     parser.add_argument("-u", "--url", help="Provide the consul url including the port.",
                         default="http://127.0.0.1:8500")
     parser.add_argument("-t", "--token", help="Provide the consul token", default="")
+    parser.add_argument("-l", "--loglevel",
+                        help="Provide the log level: INFO, DEBUG, ERROR, WARNING, CRITICAL",
+                        default="INFO")
     args = parser.parse_args()
-    yaml_data = None
+    logging.basicConfig(level=args.loglevel)
     if validators.url(args.url):
         syntax = re.compile(':\d+$')
         if not syntax.search(args.url):
             args.url = args.url + ':8500'
     else:
-        print("{} is an invalid url".format(args.url))
+        logging.error("{} is an invalid url".format(args.url))
         exit(1)
+    consul = ConsulOperation(args.url, args.token, args.retry)
+    yaml_data = None
+    payload = None
     if args.file is None and args.directory is None:
-        print("Exiting... Missing file or directory argument. Use '-h' to view options")
+        logging.error("Exiting... Missing file or directory argument. Use '-h' to view options")
         exit(1)
     elif args.file:
         try:
             yaml_file = open(args.file)
         except IOError:
-            print("File {} does not exist or path is invalid".format(args.file))
+            logging.error("File {} does not exist or path is invalid".format(args.file))
             exit(1)
         yaml_data = yaml.load(yaml_file)
-        consul = ConsulOperation(args.url, args.token, args.retry)
-        consul.parse_yaml(yaml_data)
+        payload = consul.parse_yaml(yaml_data)
+        logging.debug("Consul payload: {}".format(payload))
+        consul.submit_transaction(payload)
     elif args.directory:
         # Credit:
         # https://stackoverflow.com/questions/2186525/use-a-glob-to-find-files-recursively-in-python
@@ -49,10 +56,11 @@ if __name__ == "__main__":
             try:
                 yaml_file = open(file)
             except IOError:
-                print("Skipping... File {} does not exist or is invalid".format(file))
+                logging.error("Skipping... File {} is not a valid yaml".format(file))
                 continue
             yaml_data = yaml.load(yaml_file)
-            print("Processing {}".format(file))
-            consul = ConsulOperation(args.url, args.token, args.retry)
-            consul.parse_yaml(yaml_data)
-            
+            logging.info("Processing {}".format(file))
+            # Initial this only once. Move it outside the loop
+            payload = consul.parse_yaml(yaml_data)
+            logging.debug("Consul payload: {}".format(payload))
+            consul.submit_transaction(payload)
