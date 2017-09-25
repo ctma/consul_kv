@@ -99,7 +99,7 @@ class ConsulOperation():
                 continue
             else:
                 break
-        print("Transaction Status Code: {}".format(result.status_code))
+        logging.info("Transaction Status Code: {}".format(result.status_code))
         return result
 
     def generate_payload(self, key, base64_value):
@@ -143,3 +143,52 @@ class ConsulOperation():
                 payload = self.generate_payload(full_path, encoded_value)
                 data.append(payload)
         return data
+
+    # Need to rewrite these last three methods
+    def validate_kv(self,payload):
+        '''
+        Validate if the key-value exist in consul
+        arg:
+            payload: array of dict
+        return:
+            boolean
+        '''
+        not_exist = []
+        existing_kv = self.get_consul_export()
+        for KV in payload:
+            key = KV['KV']['Key']
+            value = KV['KV']['Value']
+            if not self.exist(existing_kv,key,value):
+                not_exist.append(dict(key=value))
+        if len(not_exist) != 0:
+            logging.info("{} was not found on the server".format(not_exist))
+        return (True if len(not_exist) == 0 else False)
+        
+    def exist(self,existing_kv,key,value):
+        '''
+        Check if the key-value matches the response from consul
+        args:
+            existing_kv: json of key-value exported from consul
+            key: str
+            value: str
+        return:
+            boolean
+        '''
+        found = False
+        for i in existing_kv:
+            if i['Key'] == key and i['Value'] == value:
+                found = True
+        return found
+
+    def get_consul_export(self):
+        '''
+        Export all the key-value from consul
+        return:
+            json
+        '''
+        result = requests.get(self.consul_url + '/v1/kv/?recurse=')
+        if result.status_code == 200:
+            return result.json()
+        else:
+            logging.error("Unable to obtain any key-value from the server")
+            exit(1)

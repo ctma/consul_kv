@@ -34,6 +34,8 @@ if __name__ == "__main__":
     if args.file is None and args.directory is None:
         logging.error("Exiting... Missing file or directory argument. Use '-h' to view options")
         exit(1)
+    # Pass the file object to a method and let it handle the processing
+    # These last two statements is not DRY. Need to rewrite it
     elif args.file:
         try:
             yaml_file = open(args.file)
@@ -44,6 +46,7 @@ if __name__ == "__main__":
         payload = consul.parse_yaml(yaml_data)
         logging.debug("Consul payload: {}".format(payload))
         consul.submit_transaction(payload)
+        consul.validate_kv(payload)
     elif args.directory:
         # Credit:
         # https://stackoverflow.com/questions/2186525/use-a-glob-to-find-files-recursively-in-python
@@ -60,7 +63,7 @@ if __name__ == "__main__":
                 continue
             yaml_data = yaml.load(yaml_file)
             logging.info("Processing {}".format(file))
-            # Initial this only once. Move it outside the loop
             payload = consul.parse_yaml(yaml_data)
             logging.debug("Consul payload: {}".format(payload))
             consul.submit_transaction(payload)
+            consul.validate_kv(payload)
