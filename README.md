@@ -16,7 +16,7 @@ This tool attempts to load your defined key-value into consul. The key-value are
 
 At my previous company, we were loading key-value into consul inefficiently. Some of the issues were:
 
- 	1. We were updating each key value one at a time and were not taking advantage of [consul transactions](https://www.consul.io/api/txn.html)
+ 	1. We were updating each key value one at a time and were not taking advantage of https://www.consul.io/api/txn.html
 	2. The format we were defining the kv in was unreadable once there were too many lines.
 	3. There was no validation on whether the key value made it into consul
 
