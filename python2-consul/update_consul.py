@@ -40,6 +40,7 @@ if __name__ == "__main__":
                 logging.debug("Extracting kv: {}".format(data))
                 payload += consul.parse_yaml(data)
         elif File().is_file(args.file):
-            data_set = File().process_file(args.file)
+            data = File().process_file(args.file)
+            payload = consul.parse_yaml(data[0])
         consul.submit_transaction(payload)
         consul.validate_kv(payload)
