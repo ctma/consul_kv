@@ -7,7 +7,6 @@ class ConsulOperation():
     def __init__(self, consul_url, token, retry):
         self.consul_url = consul_url
         self.token = token
-        self.post_data = []
         self.retry = retry
 
     def set_token(self, token):
@@ -72,7 +71,7 @@ class ConsulOperation():
         return:
             None
         '''
-        payload_max_size = 5
+        payload_max_size = 64
         logging.debug("Payload size is currently {}".format(len(payload)))
         if len(payload) > payload_max_size:
             for i in range(0,len(payload) - 1, payload_max_size):
