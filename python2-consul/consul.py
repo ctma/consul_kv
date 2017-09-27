@@ -73,12 +73,13 @@ class ConsulOperation():
             None
         '''
         payload_max_size = 5
+        logging.debug("Payload size is currently {}".format(len(payload)))
         if len(payload) > payload_max_size:
             for i in range(0,len(payload) - 1, payload_max_size):
                 logging.debug(payload[i:i+payload_max_size])
                 self.execute_transaction(payload[i:i+payload_max_size])
         else:
-            logging.debug("Transaction Payload: {}".format(payload))
+            logging.debug("Key-value Payload: {}".format(payload))
             self.execute_transaction(payload)
 
     def execute_transaction(self,transaction):
@@ -121,22 +122,18 @@ class ConsulOperation():
 
     def parse_yaml(self, yaml_input):
         '''
-        Parse the yaml and create an list of key-value consul formatted payload.
+        Parse the yaml and create an list of key-value.
         args:
             yaml_input: json
         return:
-            list of consul formatted payload
+            list of key-value
         '''
         data = []
         for k, v in yaml_input.items():
             if 'path' in v:
                 path = v['path']
-            else:
-                logging.debug("No path")
             if 'values' in v:
                 values = v['values']
-            else:
-                logging.debug("No Values")
             for key, value in values.items():
                 encoded_value = self.base64_encode(value)
                 full_path = path + '/' + key
@@ -153,6 +150,7 @@ class ConsulOperation():
         return:
             boolean
         '''
+        logging.info("Attempting to validate if key-value made it into consul")
         not_exist = []
         existing_kv = self.get_consul_export()
         for KV in payload:
@@ -161,7 +159,7 @@ class ConsulOperation():
             if not self.exist(existing_kv,key,value):
                 not_exist.append(dict(key=value))
         if len(not_exist) != 0:
-            logging.info("{} was not found on the server".format(not_exist))
+            logging.info("{} was not found on consul".format(not_exist))
         return (True if len(not_exist) == 0 else False)
         
     def exist(self,existing_kv,key,value):
