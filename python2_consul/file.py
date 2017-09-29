@@ -4,10 +4,7 @@ import fnmatch
 import logging
 
 class File():
-
-    def __init__(self, file_handler=None):
-        self.file_handler = file_handler
-
+    
     def is_directory(self, user_input):
         '''
         Check to see if the input is a file
@@ -32,7 +29,7 @@ class File():
         '''
         Attempts to open the file and return the content
         args:
-            file:
+            file: str
         return
             str
         '''
