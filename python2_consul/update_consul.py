@@ -7,7 +7,7 @@ from consul import ConsulOperation
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser("python update_consul.py -f blah.yaml")
-    parser.add_argument("-f", "--file", help="Provide the directory path or file path",
+    parser.add_argument("-f", "--file", help="Provide the relative path to the file or directory",
                         required=True)
     parser.add_argument("-r", "--retry", help="Provide the number of retry you wish to perform",
                         default=2)
@@ -20,6 +20,7 @@ if __name__ == "__main__":
                         default="INFO")
     args = parser.parse_args()
     logging.basicConfig(level=args.loglevel)
+
     if validators.url(args.url):
         syntax = re.compile(':\d+$')
         if not syntax.search(args.url):
