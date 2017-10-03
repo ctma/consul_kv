@@ -184,8 +184,9 @@ class ConsulOperation():
             json
         '''
         result = requests.get(self.consul_url + '/v1/kv/?recurse=')
-        if result.status_code == 200:
+        try:
+            result.raise_for_status()
             return result.json()
-        else:
+        except requests.exceptions.HTTPError:
             logging.error("Unable to obtain any key-value from the server")
             exit(1)
