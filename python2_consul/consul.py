@@ -133,10 +133,15 @@ class ConsulOperation():
                 path = v['path']
             if 'values' in v:
                 values = v['values']
-            for key, value in values.items():
-                encoded_value = self.base64_encode(value)
-                full_path = path + '/' + key
-                payload = self.generate_payload(full_path, encoded_value)
+            if isinstance(values, dict):
+                for key, value in values.items():
+                    encoded_value = self.base64_encode(value)
+                    full_path = path + '/' + key
+                    payload = self.generate_payload(full_path, encoded_value)
+                    data.append(payload)
+            else:
+                encoded_value = self.base64_encode(values)
+                payload = self.generate_payload(path, encoded_value)
                 data.append(payload)
         return data
 
