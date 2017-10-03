@@ -48,6 +48,17 @@ apps:
     hungry: no
     leave_alone: yes
     bill_now: no
+    is_name_kevin: no
+    refuse_to_start: no
+    shuting_down_now: no
+    need_more_time: yes
+    more_pictures: 
+      picture1: okay
+      picture2: not_okay
+    insta: not_available
+    total: 20000
+    where_is: somewhere
+    any_where: nowhere
 
 environment:
   path: envs/stage
