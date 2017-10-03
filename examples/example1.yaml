@@ -1,0 +1,145 @@
+
+apps:
+  path: apps/letmein
+  values:
+    name: admin
+    url: http://www.example.com
+    owner: admin@example.com
+    user: guest
+    location: california
+    metro: los angeles
+    city: alhambra
+    district: southern
+    moderator: the_boss
+    admin: i_have_the_power
+    abuse_email: abuse@example.com
+    exposure: internal
+    team_owner: bestteamever@example.com
+    power_by: python
+    web_server: nginx
+    proxy: varnish
+    load_balancer: elb
+    storage: s3
+    db: rds
+    dns: route53
+    monitor: cloudwatch
+    autoscale: true
+    instance_class: t2
+    instance_type: micro
+    cpu_count: 1
+    memory_size: 1
+    network_cap: 1mb
+    region: us-west-2
+    dc_location: oregon
+    purpose: appserver
+    escalation: noncritical
+    division: consumer
+    class: shibe
+    personality: stubborn
+    appearance: fox
+    meme: wow
+    drink: coffee
+    sugar: no
+    cream: no
+    black: yes
+    tasty: no
+    failure: yes
+    try_again: no
+    hungry: no
+    leave_alone: yes
+    bill_now: no
+
+environment:
+  path: envs/stage
+  values:
+    DATA_ENDPOINT: data.stage.example.com
+    RAILS_ENV: stage
+    DB_HOST: db.stage.example.com
+    DB_NAME: staging-db
+    MAILER_URL: mail.stage.example.com
+    SMTP_ADDRESS: smtp.stage.example.com
+    SMTP_DOMAIN: stage.example.com
+    SMTP_USERNAME: stage@stage.example.com
+
+httpd_conf:
+  path: apps/letmein/httpd.conf
+  values: |
+    <IfModule prefork.c>
+    StartServers 8
+    ServerLimit 50
+    MinSpareServers 5
+    MaxSpareServers 20
+    MaxClients 50
+    MaxRequestsPerChild 2000
+    </IfModule>
+
+    <IfModule worker.c>
+    StartServers 4
+    ServerLimit 20
+    MinSpareThreads 25
+    MaxSpareThreads 75
+    MaxClients 500
+    ThreadsPerChild 25
+    MaxRequestsPerChild 0
+    </IfModule>
+
+    SetEnvIfNoCase Request_URI ".xml.gz$" no-gzip dont-vary
+    Header unset ETag
+
+default_http_conf:
+  path: default/httpd.conf
+  values: |
+    # Passenger (mod_rails) config
+    ServerSignature Off
+    ServerTokens Prod
+    PassengerMaxPoolSize 30
+    PassengerPoolIdleTime 300
+    PassengerMaxRequests 5000
+    PassengerStatThrottleRate 10
+    PassengerSpawnMethod direct
+    RailsBaseURI /
+    RailsEnv 'dev'
+
+    <VirtualHost *:80>
+      ServerName dev.example.com
+      ServerAlias www.dev.example.com
+      Include /etc/httpd/conf.d/http.include
+      RewriteEngine On
+      RewriteCond %{HTTPS} off
+      RewriteRule ^(.*)$ https://%{SERVER_NAME}$1 [R=301,L]
+    </VirtualHost>
+
+    Listen 443
+
+    <VirtualHost *:443>
+      ServerName dev.example.com
+      ServerAlias www.dev.example.com
+      PassengerMinInstances 10
+      PassengerRuby /home/dev/.rvm/wrappers/ruby-2.4.0/ruby
+      Include /etc/httpd/conf.d/http.include
+    </VirtualHost>
+
+default_http_include:
+  path: default/http.include
+  values: |
+    DocumentRoot "/var/www/default/current/public"
+      <Directory "/var/www/defajlt/current/public">
+        Options Indexes FollowSymLinks
+        AllowOverride None
+        Options Indexes FollowSymLinks
+        Order allow,deny
+        Allow from all
+        AddOutputFilterByType DEFLATE text/html
+        AddOutputFilterByType DEFLATE text/plain
+        AddOutputFilterByType DEFLATE text/xml
+        AddOutputFilterByType DEFLATE text/css
+        AddOutputFilterByType DEFLATE application/xml
+        AddOutputFilterByType DEFLATE application/xhtml+xml
+        AddOutputFilterByType DEFLATE application/rss+xml
+        AddOutputFilterByType DEFLATE application/javascript
+        AddOutputFilterByType DEFLATE application/x-javascript
+      </Directory>
+
+    LogFormat "%{CF-Connecting-IP}i %l %u %t \"%r\" %>s %b \"%{Referer}i\" \"%{User-agent}i\" \"%T.%D\"" proxy
+    ErrorLog /var/log/httpd/dev.example.com.error.log
+    CustomLog /var/log/httpd/dev.example.com.access_log proxy
