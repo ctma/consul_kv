@@ -24,7 +24,7 @@ At my previous company, we were loading key-value into consul inefficiently. Som
 
 ## Installation
 
- TBA
+ 	python setup.py install
 
 ## YAML
 See [example1.yaml](examples/example1.yaml)
@@ -49,7 +49,11 @@ See [example1.yaml](examples/example1.yaml)
 
 ## Tests
 
- python setup.py test
+ 	python setup.py test
+ 	
+## Requirements
+	python3
+	consul 0.8.5 & up
 
 ## Contributors
 

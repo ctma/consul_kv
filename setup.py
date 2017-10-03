@@ -18,6 +18,7 @@ setup(
         'pytest-runner'
     ],
     tests_require=[
-        'pytest'
+        'pytest',
+        'mock'
     ]
 )
