@@ -27,7 +27,7 @@ At my previous company, we were loading key-value into consul inefficiently. Som
  TBA
 
 ## YAML
-See examples/example1.yaml
+See [example1.yaml](examples/example1.yaml)
 
 	var1:
 		path: app/env1
@@ -39,6 +39,12 @@ See examples/example1.yaml
 		values:
 			db_url: easy123
 			db_user: hello_db
+	var3:
+		path: default/httpd
+		values: |
+			a: a1
+			b: b2
+			c: c1
 		
 
 ## Tests
