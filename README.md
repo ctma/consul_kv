@@ -1,8 +1,10 @@
 ## Synopsis
 This tool attempts to load your defined key-value into consul. The key-value are formatted in yaml to allow readability.
 ## Code Example
-
-	python update_consul.py -f file1.yml	
+	#If you want to load one file
+	python update_consul.py -f file1.yml
+	
+	#If you want to load multiple *.yaml files in a directory	
 	python update_consul.py -d path_to_dir_of_yaml_files
 	
 ## Defaulted Value
@@ -24,7 +26,8 @@ At my previous company, we were loading key-value into consul inefficiently. Som
 
  TBA
 
-## YAML Format
+## YAML
+See examples/example1.yaml
 	var1:
 		path: app/env1
 		values:
@@ -39,7 +42,7 @@ At my previous company, we were loading key-value into consul inefficiently. Som
 
 ## Tests
 
- TBA
+ python setup.py test
 
 ## Contributors
 
