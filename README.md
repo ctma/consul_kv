@@ -28,6 +28,7 @@ At my previous company, we were loading key-value into consul inefficiently. Som
 
 ## YAML
 See examples/example1.yaml
+
 	var1:
 		path: app/env1
 		values:
