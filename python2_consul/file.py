@@ -1,10 +1,10 @@
 import os
-import yaml
 import fnmatch
 import logging
+import yaml
 
 class File():
-    
+   
     def is_directory(self, user_input):
         '''
         Check to see if the input is a file
@@ -57,8 +57,8 @@ class File():
             yaml_file = yaml.load(file_content)
         except yaml.scanner.ScannerError:
             logging.error("File {} contains invalid yaml".format(file_content))
-        return (True if yaml_file else False)
-    
+        return True if yaml_file else False
+
     def parse_yaml(self, file_content):
         '''
         Parse the yaml file and return a json if valid otherwise None
@@ -67,7 +67,7 @@ class File():
         return:
             json
         '''
-        return (yaml.load(file_content) if self.is_yaml_file(file_content) else None)
+        return yaml.load(file_content) if self.is_yaml_file(file_content) else None
 
     def glob_yaml_file(self, user_input):
         '''
@@ -102,7 +102,7 @@ class File():
             logging.debug("Parsing yaml content from file {}".format(file))
             data = self.parse_yaml(file_content)
             if data:
-                logging.debug("YAML in file {} is: \n{}".format(file,data))
+                logging.debug("YAML in file {} is: \n{}".format(file, data))
                 yaml_data.append(data)
             else:
                 logging.error("File {} does not contain valid yaml".format(file))
@@ -125,4 +125,3 @@ class File():
         else:
             logging.info("Directory {} contains no file with extension .yaml".format(directory))
         return yaml_data
-

@@ -1,6 +1,6 @@
+import sys
 import pytest
 import yaml
-import os, sys
 sys.path.append('.')
 from python2_consul.file import File
 
@@ -25,7 +25,7 @@ def test_is_directory(tmpdir):
 
 def test_is_file(valid_yaml_file):
     assert File().is_file(valid_yaml_file) == True
-    
+
 def test_read_file_content(valid_yaml_file):
     assert File().read_file_content(valid_yaml_file) == "key: value"
 
