@@ -43,5 +43,6 @@ if __name__ == "__main__":
         elif File().is_file(args.file):
             data = File().process_file(args.file)
             payload = consul.parse_yaml(data[0])
-        consul.submit_transaction(payload)
-        consul.validate_kv(payload)
+        if payload:
+            consul.submit_transaction(payload)
+            consul.validate_kv(payload)
