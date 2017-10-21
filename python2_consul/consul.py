@@ -2,54 +2,12 @@ import base64
 import logging
 import requests
 
-class ConsulOperation():
+class ConsulOperation:
 
     def __init__(self, consul_url, token, retry):
         self.consul_url = consul_url
         self.token = token
         self.retry = retry
-
-    def set_token(self, token):
-        '''
-        Allows you to set the consul token which grant you the proper authorization to update
-        args:
-            token: str (Default to "")
-        return:
-            None
-        '''
-        if token:
-            self.token = token
-        else:
-            logging.error("Token: {} is invalid".format(token))
-            exit(1)
-
-    def set_consul_url(self, consul_url):
-        '''
-        Allows you to set the consul url
-        args:
-            consul_url: str (Default to http://127.0.0.1:8500)
-        return:
-            None
-        '''
-        if consul_url:
-            self.consul_url = consul_url
-        else:
-            logging.error("Consul URL: {} is invalid".format(consul_url))
-            exit(1)
-
-    def set_retry(self, retry):
-        '''
-        Allows you to set the operation retry
-        args:
-            retry: int (Default to 2)
-        return:
-            None
-        '''
-        if retry and isinstance(retry,int):
-            self.retry = retry
-        else:
-            logging.error("Retry: {} is invalid".format(retry))
-            exit(1)
 
     def base64_encode(self, value):
         '''
