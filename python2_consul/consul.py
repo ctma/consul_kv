@@ -10,24 +10,24 @@ class ConsulOperation:
         self.retry = retry
 
     def _base64_encode(self, value):
-        '''
-        Base64 encode the value
-        args:
-            value: str
-        return:
-            return base64 str value
+        '''Base64 encode the value
+ 
+        Args:
+            value (str): Value you want to encode
+        Returns:
+            str object of the base64 value
         '''
         return (base64.b64encode(str(value).encode('utf-8')).decode('ascii')
                 if not isinstance(value, str)
                 else base64.b64encode(value.encode('utf-8')).decode('ascii'))
 
     def _execute_transaction(self,transaction):
-        '''
-        Submit the transactions via the consul api url
-        args:
-            transaction: batch of 64 operations
-        return:
-            requests object
+        '''Submit the transactions via the consul api url
+
+        Args:
+            transaction (list): List of json objects
+        Returns:
+            int object of http response code
         '''
         headers = {'X-Consul-Token': self.token}
         result = None
@@ -43,13 +43,13 @@ class ConsulOperation:
         return result
 
     def _generate_payload(self, key, base64_value):
-        '''
-        Generate the payload in the format consul requires
-        args:
-            key: str
-            base64_value: str (base64 encoded)
-        return:
-            json
+        '''Generate the payload in the format consul requires
+
+        Args:
+            key (str): Consul path to where the value should be stored
+            base64_value (str): Base64 encoded value
+        Returns:
+            json object of consul formatted payload
         '''
         return  {
                     "KV": {
@@ -59,13 +59,20 @@ class ConsulOperation:
                     }
                 }
 
-    def _exist(self,existing_kv,key,value):
-        '''
-        Check if the key-value matches the response from consul
-        args:
-            existing_kv: json of key-value exported from consul
-            key: str
-            value: str
+    def _exist(self, existing_kv, key, value):
+        '''Check if the key-value matches the response from consul
+
+        Args:
+            existing_kv: list of json objects
+                [
+	                {
+		                "key": "hello",
+                        "flags": 0,
+                        "value": "d29ybGQ="
+	                }
+                ]
+            key (str): Consul path to the value
+            value (str): Base64 value
         return:
             boolean
         '''
@@ -76,10 +83,17 @@ class ConsulOperation:
         return found
 
     def _get_consul_export(self):
-        '''
-        Export all the key-value from consul
-        return:
-            json
+        '''Export all the key-value from consul
+
+        Returns:
+            list of json objects
+                [
+	                {
+		                "key": "hello",
+                        "flags": 0,
+                        "value": "d29ybGQ="
+	                }
+                ]
         '''
         result = requests.get(self.consul_url + '/v1/kv/?recurse=')
         try:
@@ -90,12 +104,12 @@ class ConsulOperation:
             exit(1)
 
     def parse_yaml(self, yaml_input):
-        '''
-        Parse the yaml and create an list of key-value.
-        args:
-            yaml_input: json
-        return:
-            list of key-value
+        '''Parse the yaml and create an list of key-value.
+
+        Args:
+            yaml_input (json): File content of a yaml file
+        Returns:
+            list of json object
         '''
         data = []
         for k, v in yaml_input.items():
@@ -116,12 +130,12 @@ class ConsulOperation:
         return data
 
     def validate_kv(self,payload):
-        '''
-        Validate if the key-value exist in consul
-        arg:
-            payload: array of dict
-        return:
-            boolean
+        '''Validate if the key-value exist in consul
+
+        Args:
+            payload (list): List of consul transaction
+        Returns:
+            bool: True if key-value exist in consul, otherwise False
         '''
         logging.info("Attempting to validate if key-value made it into consul")
         not_exist = []
@@ -136,12 +150,10 @@ class ConsulOperation:
         return (True if len(not_exist) == 0 else False)
 
     def submit_transaction(self, payload):
-        '''
-        Batch the transaction so it can be submitted to consul
-        args:
-            payload: list
-        return:
-            None
+        '''Batch the transaction so it can be submitted to consul
+
+        Args:
+            payload (list): List of consul transaction to submit to consul
         '''
         payload_max_size = 64
         logging.debug("Payload size is currently {}".format(len(payload)))

@@ -4,14 +4,17 @@ import logging
 import yaml
 
 class File:
+    '''
 
+    '''
     def _read_file_content(self, file):
-        '''
-        Attempts to open the file and return the content
-        args:
-            file: str
-        return
-            str
+        '''Attempts to open the file and return the content
+
+        Args:
+            file (str): The path to the file
+        Returns:
+            str object of the file's content
+            None object if the file is invalid
         '''
         logging.info("Attempting to read content from file: {}".format(file))
         file_handler = None
@@ -25,12 +28,12 @@ class File:
         return content
 
     def _is_yaml_file(self, file_content):
-        '''
-        Check to see if the content of the file is valid yaml
-        args:
-            file_content: str
-        return
-            boolean
+        '''Validate if the file contains valid yaml
+
+        Args:
+            file_content (str): File content
+        Returns:
+            bool: True if valid, False otherwise
         '''
         yaml_file = None
         try:
@@ -40,14 +43,14 @@ class File:
         return True if yaml_file else False
 
     def _glob_yaml_file(self, user_input):
-        '''
-        If file_handler is a directory, scan for all *yaml and return a list of file
-        args:
-            user_input: str
-        return
-            list of str
-        '''
+        '''If user's input is a directory, scan for all the yaml file
 
+        Args:
+            user_input (str): Path to a directory or file
+        Returns:
+            List of str object of file path
+            None if nothing is found
+        '''
         # Credit:
         # https://stackoverflow.com/questions/2186525/use-a-glob-to-find-files-recursively-in-python
         files = []
@@ -58,42 +61,44 @@ class File:
         return files
 
     def is_directory(self, user_input):
-        '''
-        Check to see if the input is a file
-        args:
-            user_input: str
-        return
-            boolean
+        '''Check to see if the user's input is a file
+
+        Args:
+            user_input (str): Path to a file or directory
+        Returns:
+            bool: True if it is, False otherwise
         '''
         return os.path.isdir(user_input)
 
     def is_file(self, user_input):
-        '''
-        Check to see if the input is a directory
-        args:
-            user_input: str
-        return
-            boolean
+        '''Check to see if the user's input is a directory
+
+        Args:
+            user_input (str): Path to a file or directory
+        Returns:
+            bool: True if it is, False otherwise
         '''
         return os.path.isfile(user_input)
 
     def parse_yaml(self, file_content):
-        '''
-        Parse the yaml file and return a json if valid otherwise None
-        args:
-            file_content: str
-        return:
-            json
+        '''Parse the yaml file and return a json
+
+        Args:
+            file_content (str): File's content
+        Returns:
+            json object if valid
+            None if invalid
         '''
         return yaml.load(file_content) if self._is_yaml_file(file_content) else None
 
     def process_file(self, file):
-        '''
-        Process the file content and return a list
-        args:
-            file: dict
-        return
-            list of dict
+        '''Process the file content and return a list
+
+        Args:
+            file (str): Path to a file
+        Returns:
+            List of json objects
+            None if invalid
         '''
         yaml_data = []
         logging.debug("Processing content from file: {}".format(file))
@@ -109,12 +114,13 @@ class File:
         return yaml_data
 
     def process_directory(self, directory):
-        '''
-        Process each file and load it into a list of dict
-        args:
-            directory: str
-        return
-            list of json
+        '''Process each file and load it into a list of dict
+
+        Args:
+            directory (str): Path to a directory
+        Returns:
+            List of json objects
+            None if invalid
         '''
         yaml_data = []
         files = self._glob_yaml_file(directory)
