@@ -33,7 +33,6 @@ jobs:
             python3 -m venv venv
             . venv/bin/activate
             python -V
-            python setup.py install
 
       # - save_cache:
       #     paths:
@@ -41,13 +40,13 @@ jobs:
       #     key: v1-dependencies-{{ checksum "requirements.txt" }}
         
       # run tests!
-      - run:
-          name: run tests
-          command: |
-            . venv/bin/activate
-            python setup.py test
+      # - run:
+      #     name: run tests
+      #     command: |
+      #       . venv/bin/activate
+      #       python setup.py test
 
-      - store_artifacts:
-          path: test-reports
-          destination: test-reports
+      # - store_artifacts:
+      #     path: test-reports
+      #     destination: test-reports
           
