@@ -14,9 +14,11 @@ jobs:
       - run:
           name: install dependencies
           command: |
-            pyenv global 3.6.1
+            python -m venv venv
+            . venv/bin/activate
             python setup.py install
       - run:
           name: run test
           command: |
+            . venv/bin/activate
             python setup.py test
