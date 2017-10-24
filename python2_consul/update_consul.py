@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 import argparse
 import re
 import validators
@@ -7,19 +8,26 @@ from consul import ConsulOperation
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser("python update_consul.py -f blah.yaml")
-    parser.add_argument("-f", "--file", help="Provide the relative path to the file or directory",
+    parser.add_argument("-f", "--file",
+                        help="Relative path to the file or directory",
                         required=True)
-    parser.add_argument("-r", "--retry", help="Provide the number of retry you wish to perform",
+    parser.add_argument("-r", "--retry",
+                        help="Number of retry you wish to perform",
                         default=2)
-    parser.add_argument("-u", "--url", help="Provide the consul url including the port.",
+    parser.add_argument("-u", "--url",
+                        help="Consul url including the port.",
                         default="http://127.0.0.1:8500")
-    parser.add_argument("-t", "--token", help="Provide the consul token", default="")
-    parser.add_argument("-p", "--port", help="Provide the consul port", default=8500)
+    parser.add_argument("-t", "--token",
+                        help="Provide the consul token",
+                        default="")
+    parser.add_argument("-p", "--port",
+                        help="Provide the consul port",
+                        default=8500)
     parser.add_argument("-l", "--loglevel",
-                        help="Provide the log level: INFO, DEBUG, ERROR, WARNING, CRITICAL",
+                        help="INFO, DEBUG, ERROR, WARNING, CRITICAL",
                         default="INFO")
     args = parser.parse_args()
-    logging.basicConfig(level=args.loglevel)
+    logging.basicConfig(level=args.loglevel.upper())
 
     if validators.url(args.url):
         syntax = re.compile(':\d+$')
@@ -31,7 +39,8 @@ if __name__ == "__main__":
     consul = ConsulOperation(args.url, args.token, args.retry)
     payload = None
     if args.file is None:
-        print("Exiting... Missing file or directory argument. Use '-h' to view options")
+        print("""Exiting... Missing file or directory argument.
+              Use '-h' to view options""")
         exit(1)
     elif args.file:
         if File().is_directory(args.file):

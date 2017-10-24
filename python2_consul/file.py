@@ -5,10 +5,10 @@ import yaml
 
 class File:
     '''
-
+    Read and parse a yaml file
     '''
     def _read_file_content(self, file):
-        '''Attempts to open the file and return the content
+        '''Open the file and return the file's content
 
         Args:
             file (str): The path to the file
@@ -61,20 +61,20 @@ class File:
         return files
 
     def is_directory(self, user_input):
-        '''Check to see if the user's input is a file
+        '''Check to see if the user's input is a directory
 
         Args:
-            user_input (str): Path to a file or directory
+            user_input (str): Path to a directory
         Returns:
             bool: True if it is, False otherwise
         '''
         return os.path.isdir(user_input)
 
     def is_file(self, user_input):
-        '''Check to see if the user's input is a directory
+        '''Check to see if the user's input is a file
 
         Args:
-            user_input (str): Path to a file or directory
+            user_input (str): Path to a file
         Returns:
             bool: True if it is, False otherwise
         '''
@@ -127,7 +127,6 @@ class File:
         if files:
             for file in files:
                 yaml_data += self.process_file(file)
-            #logging.debug("Valid yaml data: {}".format(yaml_data))
         else:
             logging.info("Directory {} contains no file with extension .yaml".format(directory))
         return yaml_data

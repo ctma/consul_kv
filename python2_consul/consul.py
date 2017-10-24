@@ -2,8 +2,11 @@ import base64
 import logging
 import requests
 
-class ConsulOperation:
 
+class ConsulOperation:
+    '''
+
+    '''
     def __init__(self, consul_url, token, retry):
         self.consul_url = consul_url
         self.token = token
@@ -11,7 +14,7 @@ class ConsulOperation:
 
     def _base64_encode(self, value):
         '''Base64 encode the value
- 
+
         Args:
             value (str): Value you want to encode
         Returns:
@@ -21,7 +24,7 @@ class ConsulOperation:
                 if not isinstance(value, str)
                 else base64.b64encode(value.encode('utf-8')).decode('ascii'))
 
-    def _execute_transaction(self,transaction):
+    def _execute_transaction(self, transaction):
         '''Submit the transactions via the consul api url
 
         Args:
@@ -33,7 +36,8 @@ class ConsulOperation:
         result = None
         attempt = 0
         while True:
-            result = requests.put(self.consul_url + '/v1/txn', headers=headers, json=transaction)
+            result = requests.put(self.consul_url + '/v1/txn',
+                                  headers=headers, json=transaction)
             if result.status_code != 200 and attempt <= self.retry:
                 attempt += 1
                 continue
@@ -51,13 +55,13 @@ class ConsulOperation:
         Returns:
             json object of consul formatted payload
         '''
-        return  {
+        return {
                     "KV": {
                         "Verb": "set",
                         "Key": key,
                         "Value": base64_value
                     }
-                }
+               }
 
     def _exist(self, existing_kv, key, value):
         '''Check if the key-value matches the response from consul
@@ -65,11 +69,11 @@ class ConsulOperation:
         Args:
             existing_kv: list of json objects
                 [
-	                {
-		                "key": "hello",
+                    {
+                        "key": "hello",
                         "flags": 0,
                         "value": "d29ybGQ="
-	                }
+                    }
                 ]
             key (str): Consul path to the value
             value (str): Base64 value
@@ -88,11 +92,11 @@ class ConsulOperation:
         Returns:
             list of json objects
                 [
-	                {
-		                "key": "hello",
+                    {
+                        "key": "hello",
                         "flags": 0,
                         "value": "d29ybGQ="
-	                }
+                    }
                 ]
         '''
         result = requests.get(self.consul_url + '/v1/kv/?recurse=')
@@ -129,7 +133,7 @@ class ConsulOperation:
                 data.append(payload)
         return data
 
-    def validate_kv(self,payload):
+    def validate_kv(self, payload):
         '''Validate if the key-value exist in consul
 
         Args:
@@ -143,7 +147,7 @@ class ConsulOperation:
         for KV in payload:
             key = KV['KV']['Key']
             value = KV['KV']['Value']
-            if not self._exist(existing_kv,key,value):
+            if not self._exist(existing_kv, key, value):
                 not_exist.append(dict(key=value))
         if len(not_exist) != 0:
             logging.info("{} was not found on consul".format(not_exist))
@@ -158,7 +162,7 @@ class ConsulOperation:
         payload_max_size = 64
         logging.debug("Payload size is currently {}".format(len(payload)))
         if len(payload) > payload_max_size:
-            for i in range(0,len(payload) - 1, payload_max_size):
+            for i in range(0, len(payload) - 1, payload_max_size):
                 logging.debug(payload[i:i+payload_max_size])
                 self._execute_transaction(payload[i:i+payload_max_size])
         else:
