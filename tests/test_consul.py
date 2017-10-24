@@ -5,10 +5,12 @@ import mock
 sys.path.append('.')
 from python2_consul.consul import ConsulOperation
 
+
 @pytest.fixture(scope='session')
 def consul_obj():
     '''Return an ConsulOperation object'''
     return ConsulOperation('http://127.0.0.1:8500', 'mytoken', 0)
+
 
 @pytest.fixture(scope='session')
 def json():
@@ -24,6 +26,7 @@ def json():
                 }
             }
 
+
 @pytest.fixture(scope='session')
 def consul_json():
     '''Return an consul insert operation'''
@@ -36,25 +39,31 @@ def consul_json():
                 }
             }
 
+
 def test_base64_encode(consul_obj):
     '''Verify the string is base64 encoded'''
     assert consul_obj._base64_encode('test') == 'dGVzdA=='
 
+
 def test_generate_payload(consul_obj, consul_json):
     '''Verify generated payload is in the right format'''
-    assert (consul_obj._generate_payload('apps/qa/space/hello', 'VHJ1ZQ==')
-            == consul_json)
+    assert (
+        consul_obj._generate_payload(
+            'apps/qa/space/hello', 'VHJ1ZQ==') == consul_json)
+
 
 def test_parse_yaml(consul_obj, json, consul_json):
     '''Verify json is converted to consul formatted json'''
     assert consul_obj.parse_yaml(json) == [consul_json]
 
+
 def test_exist(consul_obj):
     '''Check to see if kv exists in consul'''
-    assert (consul_obj._exist([{'Key': 'hello','Value': 'world'}], "hello", "world")
-            == True)
-    assert (consul_obj._exist([{'Key': 'hello','Value': 'world'}], "no", "way")
-            == False)
+    assert (consul_obj._exist(
+        [{'Key': 'hello', 'Value': 'world'}], "hello", "world") == True)
+    assert (consul_obj._exist(
+        [{'Key': 'hello', 'Value': 'world'}], "no", "way") == False)
+
 
 @mock.patch('python2_consul.consul.requests.get')
 def test_get_consul_export(mock_get, consul_obj):
