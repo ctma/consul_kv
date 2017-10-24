@@ -1,3 +1,4 @@
+https://circleci.com/gh/ctma/consul_kv/tree/master.svg?style=shield&circle-token=3cc31d908a9fddd8e7ccb4a0aee6919eb1bb9fd4
 ## Synopsis
 This tool attempts to load your defined key-value into consul. The key-value are formatted in yaml to allow readability.
 ## Code Example
