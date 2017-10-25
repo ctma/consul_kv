@@ -21,5 +21,4 @@ jobs:
           name: run test
           command: |
             . venv/bin/activate
-            mkdir -p /tmp/pytest-of-circleci/pytest-0/temp_dir1
-            python setup.py test -v
+            python setup.py test

@@ -12,7 +12,7 @@ def valid_yaml_file(tmpdir_factory):
 
 @pytest.fixture(scope='session')
 def directory_of_yaml(tmpdir_factory):
-    fn = tmpdir_factory.mktemp('/tmp')
+    fn = tmpdir_factory.mktemp("test_file",numbered=False)
     file1 = fn.join('valid1.yaml')
     file2 = fn.join('valid2.yaml')
     file1.write("key1: value1")
