@@ -145,6 +145,6 @@ class File:
             for data in data_set:
                 logging.debug("Extracting kv: {}".format(data))
                 payload.append(data)
-        elif File().is_file(args_file):
+        elif self.is_file(args_file):
             payload = self.process_file(args_file)
         return payload
