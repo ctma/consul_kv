@@ -54,7 +54,7 @@ def test_generate_payload(consul_obj, consul_json):
 
 def test_parse_yaml(consul_obj, json, consul_json):
     '''Verify json is converted to consul formatted json'''
-    assert consul_obj.parse_yaml(json) == [consul_json]
+    assert consul_obj.parse_yaml([json]) == [consul_json]
 
 
 def test_exist(consul_obj):

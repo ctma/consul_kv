@@ -6,7 +6,8 @@ import logging
 from file import File
 from consul import ConsulOperation
 
-if __name__ == "__main__":
+
+def get_Arguments():
     parser = argparse.ArgumentParser("python update_consul.py -f blah.yaml")
     parser.add_argument("-f", "--file",
                         help="Relative path to the file or directory",
@@ -27,8 +28,9 @@ if __name__ == "__main__":
                         help="INFO, DEBUG, ERROR, WARNING, CRITICAL",
                         default="INFO")
     args = parser.parse_args()
-    logging.basicConfig(level=args.loglevel.upper())
+    return parser.parse_args()
 
+def check_consul_url(url):
     if validators.url(args.url):
         syntax = re.compile(':\d+$')
         if not syntax.search(args.url):
@@ -36,6 +38,11 @@ if __name__ == "__main__":
     else:
         print("{} is an invalid url".format(args.url))
         exit(1)
+
+if __name__ == "__main__":
+    args = get_Arguments()
+    logging.basicConfig(level=args.loglevel.upper())
+    check_consul_url(args)
     consul = ConsulOperation(args.url, args.token, args.retry)
     payload = None
     if args.file is None:
@@ -43,15 +50,8 @@ if __name__ == "__main__":
               Use '-h' to view options""")
         exit(1)
     elif args.file:
-        if File().is_directory(args.file):
-            data_set = File().process_directory(args.file)
-            payload = []
-            for data in data_set:
-                logging.debug("Extracting kv: {}".format(data))
-                payload += consul.parse_yaml(data)
-        elif File().is_file(args.file):
-            data = File().process_file(args.file)
-            payload = consul.parse_yaml(data[0])
+        data = File().process_args_file(args.file)
+        payload = consul.parse_yaml(data)
         if payload:
             consul.submit_transaction(payload)
             consul.validate_kv(payload)

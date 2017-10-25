@@ -130,3 +130,21 @@ class File:
         else:
             logging.info("Directory {} contains no file with extension .yaml".format(directory))
         return yaml_data
+
+    def process_args_file(self, args_file):
+        '''Process the file or directory and extract the kv
+
+        Args:
+            args_file (str): Path to a file or directory
+        Returns:
+            payload: List of yaml definition
+        '''
+        payload = []
+        if self.is_directory(args_file):
+            data_set = self.process_directory(args_file)
+            for data in data_set:
+                logging.debug("Extracting kv: {}".format(data))
+                payload.append(data)
+        elif File().is_file(args_file):
+            payload = self.process_file(args_file)
+        return payload
