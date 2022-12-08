@@ -5,7 +5,7 @@ setup(
     packages=['python2_consul'],
     version='0.0.1',
     install_requires=[
-        'certifi==2017.7.27.1',
+        'certifi==2022.12.7',
         'chardet==3.0.4',
         'idna==2.6',
         'PyYAML==3.12',
